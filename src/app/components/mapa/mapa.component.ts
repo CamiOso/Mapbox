@@ -105,4 +105,19 @@ export class MapaComponent implements OnInit{
     //this.markersMapbox[ marcador.id ] = marker;
 
   }
+
+
+  crearMarcador(){
+
+
+    const customMarker: lugar={
+      id: new Date().toISOString(),
+      lng: -75.75512993582937,
+      lat: 45.349977429009954,
+      nombre: 'Sin nombre',
+      color: '#' + Math.floor(Math.random()*16777215).toString(16)
+    };
+    this.agregarMarcador(customMarker);
+
+  }
 }
