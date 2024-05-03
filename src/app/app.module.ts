@@ -8,6 +8,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 import { MapaComponent } from './components/mapa/mapa.component';
 import { environment } from '../environments/environment';
+import {HttpClientModule} from '@angular/common/http';
 
 
 
@@ -19,7 +20,9 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SocketIoModule.forRoot(environment.socketConfig)
+    HttpClientModule,
+    SocketIoModule.forRoot(environment.socketConfig),
+
 
   ],
   providers: [],
