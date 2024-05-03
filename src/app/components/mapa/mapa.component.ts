@@ -41,6 +41,22 @@ export class MapaComponent implements OnInit{
     this.crearMapa();
   }
 
+  escucharSockets(){
+
+    // Marcador nuevo
+
+
+    // Mover marcador
+
+
+
+
+
+    // Borrar marcador
+
+
+  }
+
 
   crearMapa(){
 
@@ -87,6 +103,7 @@ export class MapaComponent implements OnInit{
 
     marker.on('drag', () => {
       const lngLat = marker.getLngLat();
+      console.log(lngLat);
 
       const nuevoMarcador = {
         id: marcador.id,

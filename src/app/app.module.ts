@@ -3,10 +3,12 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+
 import { MapaComponent } from './components/mapa/mapa.component';
-const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
+import { environment } from '../environments/environment';
+
 
 
 @NgModule({
@@ -17,7 +19,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SocketIoModule.forRoot(config),
+    SocketIoModule.forRoot(environment.socketConfig)
+
   ],
   providers: [],
   bootstrap: [AppComponent]
