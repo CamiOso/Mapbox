@@ -3,6 +3,7 @@ import * as mapbox from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import { lugar } from '../../interfaces/interfaces';
 import { HttpClient } from '@angular/common/http';
+import { WebsocketService } from '../../services/websocket.service';
 interface RespMarcadores {
   [key: string]: lugar
 }
@@ -17,10 +18,13 @@ export class MapaComponent implements OnInit{
   mapa!: mapboxgl.Map;
   //lugares: lugar[] = [ ];
   lugares:  RespMarcadores= { };
+  markersMapbox: { [id: string]: mapboxgl.Marker } = { };
 
 
 
-  constructor(private http:HttpClient){}
+  constructor(private http:HttpClient,
+              private wsService: WebsocketService
+  ){}
 
   ngOnInit(){
     this.http.get<RespMarcadores>('http://localhost:5000/mapa').subscribe( lugares => {
@@ -28,13 +32,20 @@ export class MapaComponent implements OnInit{
       this.lugares = lugares;
       this.crearMapa();
 
+
     });
+    this.escucharSockets();
 
   }
 
   escucharSockets(){
 
     // Marcador nuevo
+    this.wsService.listen('marcador-nuevo')
+    .subscribe((marcador: any) => {
+      this.agregarMarcador(marcador);
+    });
+
 
 
     // Mover marcador
@@ -44,6 +55,13 @@ export class MapaComponent implements OnInit{
 
 
     // Borrar marcador
+
+    this.wsService.listen('marcador-borrar')
+    .subscribe((id: any) => {
+      this.markersMapbox[id].remove();
+      delete this.markersMapbox[id];
+    });
+
 
 
   }
@@ -94,23 +112,25 @@ export class MapaComponent implements OnInit{
 
     marker.on('drag', () => {
       const lngLat = marker.getLngLat();
-      console.log(lngLat);
+      //console.log(lngLat);
 
       const nuevoMarcador = {
         id: marcador.id,
         ...lngLat
       }
+      console.log(nuevoMarcador);
 
-     // this.wsService.emit( 'marcador-mover', nuevoMarcador );
+      this.wsService.emit( 'marcador-mover', nuevoMarcador );
 
     });
 
     btnBorrar.addEventListener( 'click', () => {
       marker.remove();
-      //this.wsService.emit( 'marcador-borrar', marcador.id );
+      this.wsService.emit( 'marcador-borrar', marcador.id );
     });
 
-    //this.markersMapbox[ marcador.id ] = marker;
+    this.markersMapbox[ marcador.id ] = marker;
+    console.log(this.markersMapbox);
 
   }
 
@@ -126,6 +146,8 @@ export class MapaComponent implements OnInit{
       color: '#' + Math.floor(Math.random()*16777215).toString(16)
     };
     this.agregarMarcador(customMarker);
+    //emitir marcador-nuevo
+    this.wsService.emit('marcador-nuevo', customMarker);
 
   }
 }
