@@ -49,6 +49,10 @@ export class MapaComponent implements OnInit{
 
 
     // Mover marcador
+    this.wsService.listen('marcador-mover').subscribe((marcador: any) => {
+      this.markersMapbox[marcador.id].setLngLat([marcador.lng, marcador.lat]);
+
+    })
 
 
 
